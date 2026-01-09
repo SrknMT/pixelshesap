@@ -3,13 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pixels Manager</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Pixels Manager v8.1</title>
+    
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%236246ea%22 stroke=%22%23ccff00%22 stroke-width=%225%22/><text x=%2250%22 y=%2255%22 font-family=%22Arial%22 font-weight=%22900%22 font-size=%2260%22 fill=%22%23ccff00%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22>P</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%236246ea%22 stroke=%22%23ccff00%22 stroke-width=%225%22/><text x=%2250%22 y=%2255%22 font-family=%22Arial%22 font-weight=%22900%22 font-size=%2260%22 fill=%22%23ccff00%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22>P</text></svg>">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
     <script src="data.js"></script> 
     
     <style>
-        /* --- TEMA AYARLARI --- */
         :root {
             --neon-yellow: #ccff00;
             --pixels-purple: #6246ea;
@@ -26,12 +31,10 @@
             -webkit-tap-highlight-color: transparent; 
         }
 
-        /* Scrollbar */
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: var(--bg-dark); }
         ::-webkit-scrollbar-thumb { background: var(--pixels-purple); border-radius: 2px; }
 
-        /* --- INPUTS --- */
         input[type=number]::-webkit-inner-spin-button, 
         input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
         
@@ -46,10 +49,10 @@
             transition: all 0.2s;
             font-weight: bold;
             font-size: 16px;
+            text-align: center;
         }
-        .game-input:focus { border-color: var(--neon-yellow); }
+        .game-input:focus { border-color: var(--neon-yellow); box-shadow: 0 0 5px rgba(204, 255, 0, 0.2); }
 
-        /* Arama ve Filtre */
         .search-bar {
             background: #0f0518;
             border: 1px solid var(--border-color);
@@ -74,7 +77,6 @@
             border-left: none;
         }
 
-        /* --- UI ELEMENTS --- */
         .nav-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; padding: 12px 0; color: #a78bfa; transition: all 0.2s; border-top: 3px solid transparent; }
         .nav-btn.active { color: var(--neon-yellow); border-top-color: var(--neon-yellow); background: linear-gradient(to bottom, rgba(98, 70, 234, 0.15), transparent); }
         .nav-btn svg { width: 26px; height: 26px; margin-bottom: 4px; }
@@ -85,16 +87,15 @@
             border: 1px solid var(--border-color); 
             border-radius: 12px; 
             box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            margin-bottom: 1rem;
         }
 
         .table-header { font-size: 11px; font-weight: 900; color: #a78bfa; text-transform: uppercase; letter-spacing: 0.5px; }
         
-        /* Grid Column Config - GÜNCELLENDİ: Silme butonu kalkınca Ürün sütunu genişledi */
-        .col-prod { grid-column: span 5; } /* Eskiden 4'tü */
-        .col-pe   { grid-column: span 2; text-align: right; }
-        .col-exp  { grid-column: span 2; text-align: center; }
-        .col-sell { grid-column: span 2; }
-        .col-time { grid-column: span 1; text-align: center; }
+        .col-prod { grid-column: span 6; } 
+        .col-xp   { grid-column: span 2; text-align: center; }
+        .col-en   { grid-column: span 2; text-align: center; }
+        .col-time { grid-column: span 2; text-align: center; }
 
     </style>
 </head>
@@ -116,69 +117,35 @@
 
     <div class="flex-1 overflow-hidden relative">
         
-        <div id="view-craft" class="page-view h-full flex flex-col">
+        <div id="view-list" class="page-view h-full flex flex-col hidden">
             <div class="p-3 bg-[#130822] border-b border-[#4c1d95] flex sticky top-0 z-20">
-                <input type="text" id="searchCraft" placeholder="Ürün Ara..." class="search-bar" oninput="renderTable('craftContainer', craftData, 'searchCraft', 'filterCraft')">
-                <select id="filterCraft" class="filter-select" onchange="renderTable('craftContainer', craftData, 'searchCraft', 'filterCraft')">
-                    <option value="ALL">TÜMÜ</option>
-                    </select>
-            </div>
-
-            <div class="grid grid-cols-12 gap-2 bg-[#2d1b4e] py-3 px-3 border-b border-[#4c1d95] shrink-0 items-center sticky top-[66px] z-10 shadow-md">
-                <div class="col-prod pl-1 table-header text-white">ÜRÜN</div>
-                <div class="col-pe table-header text-emerald-400">P/E</div>
-                <div class="col-exp table-header text-blue-300">XP/EN</div>
-                <div class="col-sell table-header text-[#ccff00] text-right pr-2">SATIŞ</div>
-                <div class="col-time table-header text-slate-400">SÜRE</div>
-            </div>
-            <div id="craftContainer" class="flex-1 overflow-y-auto p-2 space-y-2 pb-24 custom-scrollbar"></div>
-        </div>
-
-        <div id="view-raw" class="page-view h-full flex flex-col hidden">
-            <div class="p-3 bg-[#130822] border-b border-[#4c1d95] flex sticky top-0 z-20">
-                <input type="text" id="searchRaw" placeholder="Hammadde Ara..." class="search-bar" oninput="renderTable('rawContainer', rawData, 'searchRaw', 'filterRaw')">
-                <select id="filterRaw" class="filter-select" onchange="renderTable('rawContainer', rawData, 'searchRaw', 'filterRaw')">
+                <input type="text" id="searchItem" placeholder="Ürün Ara..." class="search-bar" oninput="renderTable()">
+                <select id="filterItem" class="filter-select" onchange="renderTable()">
                     <option value="ALL">TÜMÜ</option>
                 </select>
             </div>
 
             <div class="grid grid-cols-12 gap-2 bg-[#2d1b4e] py-3 px-3 border-b border-[#4c1d95] shrink-0 items-center sticky top-[66px] z-10 shadow-md">
-                <div class="col-prod pl-1 table-header text-white">HAMMADDE</div>
-                <div class="col-pe table-header text-emerald-400">P/E</div>
-                <div class="col-exp table-header text-blue-300">XP/EN</div>
-                <div class="col-sell table-header text-[#ccff00] text-right pr-2">SATIŞ</div>
-                <div class="col-time table-header text-slate-400">SÜRE</div>
+                <div class="col-prod pl-1 table-header text-white">ÜRÜN ADI</div>
+                <div class="col-xp table-header text-blue-300 text-center">XP</div>
+                <div class="col-en table-header text-purple-400 text-center">EN</div>
+                <div class="col-time table-header text-slate-400 text-center">SÜRE</div>
             </div>
-            <div id="rawContainer" class="flex-1 overflow-y-auto p-2 space-y-2 pb-24 custom-scrollbar"></div>
+            <div id="listContainer" class="flex-1 overflow-y-auto p-2 space-y-2 pb-24 custom-scrollbar"></div>
         </div>
 
-        <div id="view-profile" class="page-view h-full overflow-y-auto hidden p-4 pb-24">
-            <div class="max-w-lg mx-auto space-y-4">
-                <div class="glass-card p-4 flex justify-between items-center bg-gradient-to-r from-[#2d1b4e] to-[#130822]">
-                    <div>
-                        <h2 class="text-lg font-black text-white uppercase tracking-wider">Yetenekler</h2>
-                        <p class="text-[10px] text-purple-300">Seviyelerini güncel tut.</p>
-                    </div>
-                    <button onclick="saveProfile()" class="bg-[#ccff00] hover:bg-[#b3e600] text-black px-6 py-2.5 rounded-lg font-bold shadow-[0_0_15px_rgba(204,255,0,0.3)] active:scale-95 transition-transform uppercase text-xs">
-                        KAYDET
-                    </button>
-                </div>
-                <div class="space-y-3" id="skillsList"></div>
-            </div>
-        </div>
-
-        <div id="view-calc" class="page-view h-full overflow-y-auto hidden p-4 pb-24">
-            <div class="max-w-lg mx-auto space-y-5">
+        <div id="view-calc" class="page-view h-full overflow-y-auto p-4 pb-24">
+            <div class="max-w-lg mx-auto">
                 
-                <div class="glass-card p-5 space-y-5 bg-[#201036]">
+                <div class="glass-card p-5 space-y-4">
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="table-header block mb-2">YETENEK</label>
-                            <select id="calcSkillSelect" class="game-input text-sm" style="background-image:none;" onchange="updateCalcSkillContext()"></select>
+                            <select id="calcSkillSelect" class="game-input text-sm !text-left pl-2" style="background-image:none;" onchange="updateCalcSkillContext()"></select>
                         </div>
                         <div>
                             <label class="table-header block mb-2 text-[#ccff00]">ÜRÜN SEÇ</label>
-                            <select id="calcItemSelect" class="game-input text-sm border-[#ccff00]" style="background-image:none;" onchange="autoFillCalc()">
+                            <select id="calcItemSelect" class="game-input text-sm !text-left pl-2 border-[#ccff00]" style="background-image:none;" onchange="autoFillCalc()">
                                 <option value="">-- Listeden Seç --</option>
                             </select>
                         </div>
@@ -191,8 +158,8 @@
                         </div>
                         <div class="pb-5 text-purple-500 font-bold text-xl">➜</div>
                         <div class="flex-1">
-                            <label class="table-header block mb-2 text-[#ccff00]">HEDEF LEVEL</label>
-                            <input type="number" id="calcTargetLvl" class="game-input text-center text-3xl font-black h-[54px]" value="10" oninput="calculate()">
+                            <label class="table-header block mb-2 text-[#ccff00] text-center">HEDEF LEVEL</label>
+                            <input type="number" inputmode="decimal" id="calcTargetLvl" class="game-input text-center text-3xl font-black h-[54px]" value="10" oninput="calculate()">
                         </div>
                     </div>
                     <div class="text-right text-xs text-purple-300">
@@ -200,62 +167,55 @@
                     </div>
                 </div>
 
-                <div class="glass-card p-4">
-                    <h3 class="table-header mb-3 border-b border-[#4c1d95] pb-2 text-white">MANUEL DEĞERLER (BİRİM)</h3>
-                    <div class="grid grid-cols-4 gap-2">
-                        <div>
-                            <label class="text-[8px] text-blue-300 font-bold block mb-1 text-center">XP</label>
-                            <input type="number" id="unitXP" class="game-input text-center text-sm p-2" placeholder="0" oninput="calculate()">
+                <div class="glass-card p-4 bg-[#1a0b2e] border-[#ccff00]">
+                    <h3 class="table-header mb-3 border-b border-[#4c1d95] pb-2 text-[#ccff00]">OPERASYON AYARLARI</h3>
+                    <div class="flex gap-4 items-center">
+                        <div class="flex-1">
+                            <label class="text-[9px] text-white font-bold block mb-1">CİHAZ / TARLA SAYISI</label>
+                            <input type="number" inputmode="decimal" id="deviceCount" class="game-input text-xl text-[#ccff00] !border-[#ccff00]" value="1" placeholder="1" oninput="calculate()">
+                            <p class="text-[8px] text-slate-500 mt-1 text-center">Tek seferde kaç üretim?</p>
                         </div>
-                        <div>
-                            <label class="text-[8px] text-purple-300 font-bold block mb-1 text-center">ENERJİ</label>
-                            <input type="number" id="unitEnergy" class="game-input text-center text-sm p-2" placeholder="0" oninput="calculate()">
-                        </div>
-                        <div>
-                            <label class="text-[8px] text-red-400 font-bold block mb-1 text-center">MALİYET</label>
-                            <input type="number" id="unitCost" class="game-input text-center text-sm p-2" placeholder="0" oninput="calculate()">
-                        </div>
-                        <div>
-                            <label class="text-[8px] text-[#ccff00] font-bold block mb-1 text-center">SATIŞ</label>
-                            <input type="number" id="unitSalePrice" class="game-input text-center text-sm p-2" placeholder="0" oninput="calculate()">
+                        <div class="w-1/3 text-center bg-[#0f0518] p-2 rounded-lg border border-[#4c1d95]">
+                            <div class="text-[9px] text-slate-400 font-bold mb-1">SÜRE (dk)</div>
+                            <div id="displayUnitTime" class="text-lg font-bold text-white">-</div>
+                            <input type="hidden" id="hiddenUnitMinutes" value="0">
                         </div>
                     </div>
                 </div>
 
+                <div class="glass-card p-4">
+                    <h3 class="table-header mb-3 border-b border-[#4c1d95] pb-2 text-white">MANUEL VERİ GİRİŞİ</h3>
+                    <div class="grid grid-cols-4 gap-2">
+                        <div><label class="text-[8px] text-blue-300 font-bold block mb-1 text-center">XP</label><input type="number" inputmode="decimal" id="unitXP" class="game-input text-sm p-2" oninput="calculate()"></div>
+                        <div><label class="text-[8px] text-purple-300 font-bold block mb-1 text-center">EN</label><input type="number" inputmode="decimal" id="unitEnergy" class="game-input text-sm p-2" oninput="calculate()"></div>
+                        
+                        <div><label class="text-[8px] text-red-400 font-bold block mb-1 text-center">MALİYET</label><input type="number" inputmode="decimal" id="unitCost" class="game-input text-sm p-2 border-red-900" placeholder="0" oninput="calculate()"></div>
+                        <div><label class="text-[8px] text-[#ccff00] font-bold block mb-1 text-center">SATIŞ</label><input type="number" inputmode="decimal" id="unitSalePrice" class="game-input text-sm p-2 border-lime-900" placeholder="0" oninput="calculate()"></div>
+                    </div>
+                </div>
+
                 <div class="glass-card p-0 overflow-hidden">
-                    <div class="bg-[#4c1d95] p-2 text-center text-xs font-bold text-white tracking-widest">HESAP SONUCU</div>
-                    <div class="p-5 grid grid-cols-2 gap-y-5 gap-x-4">
-                        
-                        <div class="space-y-1 border-r border-[#4c1d95] pr-2">
-                            <div class="text-[10px] text-slate-400 uppercase font-bold">Üretim Adedi</div>
-                            <div class="text-2xl font-black text-white" id="resCount">-</div>
-                        </div>
-                        
-                        <div class="space-y-1 pl-2">
-                            <div class="text-[10px] text-slate-400 uppercase font-bold">Toplam Enerji</div>
-                            <div class="text-2xl font-bold text-purple-400" id="resTotalEnergy">-</div>
+                    <div class="bg-[#4c1d95] p-2 flex justify-between items-center px-4">
+                        <span class="text-xs font-bold text-white tracking-widest">ANALİZ RAPORU</span>
+                        <span id="resBatchCount" class="text-[9px] font-bold text-[#ccff00] bg-black/30 px-2 py-0.5 rounded">0 Tur</span>
+                    </div>
+                    
+                    <div class="p-5 space-y-4">
+                        <div class="bg-blue-900/20 border border-blue-800 p-3 rounded-lg flex justify-between items-center">
+                            <span class="text-[10px] text-blue-300 font-bold uppercase">TOPLAM SÜRE</span>
+                            <span id="resTotalTime" class="text-xl font-black text-white">-</span>
                         </div>
 
-                        <div class="col-span-2 border-t border-[#4c1d95] pt-3 flex justify-between">
-                            <span class="text-xs text-slate-400 font-bold">Enerji Maliyeti (1E=50c)</span>
-                            <span class="text-sm font-bold text-red-400" id="resEnergyCost">-</span>
-                        </div>
-                        <div class="col-span-2 flex justify-between">
-                            <span class="text-xs text-slate-400 font-bold">Materyal Maliyeti</span>
-                            <span class="text-sm font-bold text-red-400" id="resMatCost">-</span>
-                        </div>
-                        <div class="col-span-2 border-t border-dashed border-[#4c1d95] pt-2 flex justify-between">
-                            <span class="text-xs text-slate-300 font-bold">TOPLAM MALİYET</span>
-                            <span class="text-lg font-bold text-red-500" id="resTotalCost">-</span>
-                        </div>
-                        <div class="col-span-2 flex justify-between">
-                            <span class="text-xs text-slate-300 font-bold">TOPLAM CİRO</span>
-                            <span class="text-lg font-bold text-[#ccff00]" id="resTotalSales">-</span>
+                        <div class="grid grid-cols-2 gap-y-2 gap-x-4 border-b border-[#4c1d95] pb-4 text-sm">
+                            <div class="flex justify-between"><span class="text-[10px] text-slate-400 font-bold uppercase">ADET</span><span class="text-white font-bold" id="resCount">-</span></div>
+                            <div class="flex justify-between"><span class="text-[10px] text-slate-400 font-bold uppercase">TOPLAM ENERJİ</span><span class="text-purple-400 font-bold" id="resTotalEnergy">-</span></div>
+                            <div class="flex justify-between"><span class="text-[10px] text-slate-400 font-bold uppercase">ENRJ + MALZEME</span><span class="text-red-400 font-bold" id="resTotalCost">-</span></div>
+                            <div class="flex justify-between"><span class="text-[10px] text-slate-400 font-bold uppercase">TOPLAM CİRO</span><span class="text-[#ccff00] font-bold" id="resTotalSales">-</span></div>
                         </div>
 
-                        <div class="col-span-2 mt-2 bg-[#0f0518] border border-[#ccff00] rounded-xl p-4 text-center">
-                            <div class="text-[10px] text-[#ccff00] uppercase font-black tracking-widest">NET KÂR / ZARAR</div>
-                            <div class="text-4xl font-black text-white mt-2 drop-shadow-[0_0_10px_rgba(204,255,0,0.5)]" id="resProfitLoss">-</div>
+                        <div class="bg-[#0f0518] border border-[#ccff00] rounded-xl p-3 text-center">
+                            <div class="text-[10px] text-[#ccff00] uppercase font-black tracking-widest">TAHMİNİ NET KÂR</div>
+                            <div class="text-3xl font-black text-white mt-1" id="resProfitLoss">-</div>
                         </div>
                     </div>
                 </div>
@@ -263,29 +223,34 @@
             </div>
         </div>
 
+        <div id="view-profile" class="page-view h-full overflow-y-auto hidden p-4 pb-24">
+            <div class="max-w-lg mx-auto space-y-4">
+                <div class="glass-card p-4 flex justify-between items-center bg-gradient-to-r from-[#2d1b4e] to-[#130822]">
+                    <div><h2 class="text-lg font-black text-white uppercase tracking-wider">Yetenekler</h2><p class="text-[10px] text-purple-300">Seviyelerini güncel tut.</p></div>
+                    <button onclick="saveProfile()" class="bg-[#ccff00] hover:bg-[#b3e600] text-black px-6 py-2.5 rounded-lg font-bold shadow-[0_0_15px_rgba(204,255,0,0.3)] active:scale-95 transition-transform uppercase text-xs">KAYDET</button>
+                </div>
+                <div class="space-y-3" id="skillsList"></div>
+            </div>
+        </div>
+
     </div>
 
     <nav class="bg-[#130822] border-t border-[#4c1d95] flex justify-around pb-[env(safe-area-inset-bottom)] z-40 sticky bottom-0 w-full shrink-0 shadow-2xl">
-        <button onclick="switchView('craft')" id="nav-craft" class="nav-btn active">
+        <button onclick="switchView('list')" id="nav-list" class="nav-btn">
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
-            <span class="nav-text">Üretim</span>
+            <span class="nav-text">LİSTELER</span>
         </button>
-        <button onclick="switchView('raw')" id="nav-raw" class="nav-btn">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-            <span class="nav-text">Hammadde</span>
+        <button onclick="switchView('calc')" id="nav-calc" class="nav-btn active">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+            <span class="nav-text">HESAPLA</span>
         </button>
         <button onclick="switchView('profile')" id="nav-profile" class="nav-btn">
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-            <span class="nav-text">Profil</span>
-        </button>
-        <button onclick="switchView('calc')" id="nav-calc" class="nav-btn">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
-            <span class="nav-text">Hesap</span>
+            <span class="nav-text">PROFİL</span>
         </button>
     </nav>
 
     <script>
-        // --- CONSTANTS ---
         const ENERGY_PRICE = 50; 
         const xp_table = [0, 100, 316, 661, 1148, 1792, 2609, 3618, 4839, 6294, 8007, 10006, 12321, 14985, 18035, 21512, 25460, 29929, 34974, 40655, 47039, 54200, 62220, 71189, 81207, 92384, 104843, 118718, 134158, 151327, 170408, 191601, 215129, 241237, 270196, 302306, 337899, 377341, 421037, 469434, 523027, 582362, 648043, 720738, 801184, 890196, 988675, 1097617, 1218122, 1351407, 1498815, 1661832, 1842099, 2041431, 2261832, 2505519, 2774940, 3072802, 3402097, 3766129, 4168553, 4613406, 5105150, 5648717, 6249557, 6913694, 7647784, 8459185, 9356027, 10347297, 11442925, 12653887, 13992313, 15471608, 17106587, 18913624, 20910815, 23118158, 25557755, 28254032, 31233985, 34527448, 38167393, 42190260, 46636322, 51550086, 56980741, 62982648, 69615887, 76946856, 85048935, 94003223, 103899347, 114836361, 126923737, 140282459, 155046236, 171362838, 189395578, 209324943, 231350404];
         
@@ -303,116 +268,77 @@
         ];
 
         let userSkills = JSON.parse(localStorage.getItem('pixels_user_skills')) || defaultSkills;
-        let currentView = 'craft';
+        let unifiedData = [];
 
         window.onload = function() {
-            if(typeof rawData === 'undefined' || typeof craftData === 'undefined') {
-                alert("HATA: data.js bulunamadı!"); return;
+            if(typeof rawData === 'undefined' && typeof craftData === 'undefined') {
+                alert("HATA: data.js bulunamadı! data.js dosyasının index.html ile aynı klasörde olduğundan emin ol.");
+            } else {
+                unifiedData = [...(typeof rawData !== 'undefined' ? rawData : []), ...(typeof craftData !== 'undefined' ? craftData : [])];
             }
-            populateFilters();
-            renderTable('craftContainer', craftData, 'searchCraft', 'filterCraft');
+            populateUnifiedFilter();
+            renderTable();
             renderProfile();
             updateTotalLevel();
             populateCalcSkillSelect();
+            switchView('calc');
         }
 
         function switchView(viewName) {
-            currentView = viewName;
             document.querySelectorAll('.page-view').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
             document.getElementById('view-' + viewName).classList.remove('hidden');
             document.getElementById('nav-' + viewName).classList.add('active');
-
-            if(viewName === 'craft') renderTable('craftContainer', craftData, 'searchCraft', 'filterCraft');
-            if(viewName === 'raw') renderTable('rawContainer', rawData, 'searchRaw', 'filterRaw');
         }
 
-        function populateFilters() {
-            const categories = new Set([...craftData, ...rawData].map(i => i.cat));
-            const craftSel = document.getElementById('filterCraft');
-            const rawSel = document.getElementById('filterRaw');
-            
-            // Alfabetik sırala
-            const sortedCats = Array.from(categories).sort();
-
-            sortedCats.forEach(cat => {
-                const opt1 = document.createElement('option'); opt1.value = cat; opt1.innerText = cat;
-                const opt2 = document.createElement('option'); opt2.value = cat; opt2.innerText = cat;
-                craftSel.appendChild(opt1);
-                rawSel.appendChild(opt2);
+        function populateUnifiedFilter() {
+            const categories = new Set(unifiedData.map(i => i.cat));
+            const sel = document.getElementById('filterItem');
+            Array.from(categories).sort().forEach(cat => {
+                const opt = document.createElement('option'); opt.value = cat; opt.innerText = cat;
+                sel.appendChild(opt);
             });
         }
 
-        function renderTable(containerId, data, searchId, filterId) {
-            const container = document.getElementById(containerId);
-            const searchVal = document.getElementById(searchId).value.toLowerCase();
-            const filterVal = document.getElementById(filterId).value;
-            
+        function renderTable() {
+            const container = document.getElementById('listContainer');
+            const searchVal = document.getElementById('searchItem').value.toLowerCase();
+            const filterVal = document.getElementById('filterItem').value;
             container.innerHTML = '';
+            
+            const filtered = unifiedData.filter(item => {
+                const matchSearch = item.name.toLowerCase().includes(searchVal);
+                const matchFilter = filterVal === "ALL" || item.cat === filterVal;
+                return matchSearch && matchFilter;
+            });
 
-            const filteredData = data.map((item, index) => ({...item, originalIndex: index}))
-                .filter(item => {
-                    const matchSearch = item.name.toLowerCase().includes(searchVal);
-                    const matchFilter = filterVal === "ALL" || item.cat === filterVal;
-                    return matchSearch && matchFilter;
-                });
+            filtered.sort((a,b) => a.cat.localeCompare(b.cat));
 
-            filteredData.forEach((item) => {
-                let finalProfit = item.profit;
-                let finalPE = item.pe;
-
-                if(item.cost > 0) {
-                    finalProfit = item.sell - item.cost;
-                    if(item.en > 0) finalPE = (finalProfit / item.en).toFixed(2);
-                } else if (containerId === 'rawContainer' && item.cost === 0) {
-                    finalProfit = item.sell;
-                    if(item.en > 0) finalPE = (item.sell / item.en).toFixed(2);
-                }
-
-                // Kategori Rengi
+            filtered.forEach((item) => {
                 let catColor = 'text-slate-400';
                 if(item.cat.includes('Farming')) catColor = 'text-green-400';
                 if(item.cat.includes('Cooking')) catColor = 'text-orange-400';
                 if(item.cat.includes('Mining') || item.cat.includes('Stone')) catColor = 'text-blue-400';
                 if(item.cat.includes('Wood')) catColor = 'text-amber-700';
                 if(item.cat.includes('Business')) catColor = 'text-indigo-400';
+                if(item.cat.includes('Animal')) catColor = 'text-yellow-400';
 
                 const row = document.createElement('div');
                 row.className = 'grid grid-cols-12 gap-2 items-center bg-[#201036] border-b border-[#4c1d95] p-3 hover:bg-[#2d1b4e] transition-colors rounded-lg mb-1';
                 
-                // --- TABLO SATIRI (SİL BUTONU YOK) ---
                 row.innerHTML = `
                     <div class="col-prod flex flex-col">
                         <span class="font-bold uppercase ${catColor} text-[10px] tracking-wider">${item.cat}</span>
                         <span class="font-bold text-white truncate text-[14px] leading-tight">${item.name}</span>
                     </div>
-                    
-                    <div class="col-pe data-cell ${finalPE > 0 ? 'text-emerald-400' : 'text-red-500'} font-black text-[15px]">${formatNum(finalPE)}</div>
-                    
-                    <div class="col-exp flex flex-col items-center justify-center leading-tight">
-                        <span class="data-cell text-blue-300 font-bold text-[13px]">${formatNum(item.exp)}</span>
-                        <span class="data-cell text-purple-400 text-[11px]">${formatNum(item.en)}E</span>
-                    </div>
-
-                    <div class="col-sell text-right">
-                         <input type="number" class="w-full bg-transparent text-right text-[#ccff00] font-bold text-[15px] outline-none focus:border-b border-[#ccff00]" value="${item.sell}" onchange="updateItem('${containerId}', ${item.originalIndex}, 'sell', this.value)">
-                    </div>
-
-                    <div class="col-time text-center data-cell text-slate-400 text-[13px]">${item.time}</div>
+                    <div class="col-xp text-blue-300 font-bold text-[14px] text-center">${formatNum(item.exp)}</div>
+                    <div class="col-en text-purple-400 font-bold text-[14px] text-center">${formatNum(item.en)}</div>
+                    <div class="col-time text-slate-400 text-[13px] text-center">${item.time}</div>
                 `;
                 container.appendChild(row);
             });
         }
 
-        function updateItem(containerId, index, key, val) {
-            const data = containerId === 'rawContainer' ? rawData : craftData;
-            if(typeof val === 'string') val = parseFloat(val.replace(/\./g,'').replace(',','.'));
-            data[index][key] = val || 0;
-            if(containerId === 'rawContainer') renderTable(containerId, data, 'searchRaw', 'filterRaw');
-            else renderTable(containerId, data, 'searchCraft', 'filterCraft');
-        }
-
-        // --- PROFILE ---
         function renderProfile() {
             const list = document.getElementById('skillsList');
             list.innerHTML = '';
@@ -425,11 +351,11 @@
                             <div class="flex gap-3">
                                 <div class="flex flex-col w-1/4">
                                     <label class="text-[9px] text-purple-300 font-bold mb-1">LEVEL</label>
-                                    <input type="number" id="pfl-lvl-${index}" value="${skill.lvl}" class="game-input text-center h-10 bg-[#0f0518] text-[#ccff00] text-lg font-black">
+                                    <input type="number" inputmode="decimal" id="pfl-lvl-${index}" value="${skill.lvl}" class="game-input text-center h-10 bg-[#0f0518] text-[#ccff00] text-lg font-black">
                                 </div>
                                 <div class="flex flex-col w-3/4">
                                     <label class="text-[9px] text-purple-300 font-bold mb-1">XP</label>
-                                    <input type="number" id="pfl-xp-${index}" value="${skill.xp}" class="game-input text-center h-10 bg-[#0f0518] text-sm text-slate-300">
+                                    <input type="number" inputmode="decimal" id="pfl-xp-${index}" value="${skill.xp}" class="game-input text-center h-10 bg-[#0f0518] text-sm text-slate-300">
                                 </div>
                             </div>
                         </div>
@@ -446,7 +372,7 @@
             localStorage.setItem('pixels_user_skills', JSON.stringify(userSkills));
             updateTotalLevel();
             populateCalcSkillSelect();
-            alert("KAYDEDİLDİ ✅");
+            alert("PROFİL KAYDEDİLDİ ✅");
         }
 
         function updateTotalLevel() {
@@ -454,7 +380,6 @@
             document.getElementById('headerTotalLevel').innerText = total;
         }
 
-        // --- CALCULATOR ---
         function getCumulativeXP(lvl) {
             if (lvl < 0) return 0;
             if (lvl >= xp_table.length) return xp_table[xp_table.length - 1];
@@ -489,8 +414,7 @@
         function populateItemSelect(skillName) {
             const sel = document.getElementById('calcItemSelect');
             sel.innerHTML = '<option value="">-- Listeden Seç --</option>';
-            const allItems = [...craftData, ...rawData];
-            const filtered = allItems.filter(i => {
+            const filtered = unifiedData.filter(i => {
                 if(skillName === 'Woodwork') return i.cat.includes('Wood');
                 if(skillName === 'Metalwork') return i.cat.includes('Metal');
                 if(skillName === 'Stoneshape') return i.cat.includes('Stone') || i.cat.includes('Mining');
@@ -498,22 +422,57 @@
                 return i.cat.includes(skillName);
             });
             filtered.sort((a,b) => a.name.localeCompare(b.name));
-            filtered.forEach(item => {
+            filtered.forEach((item, index) => {
                 const opt = document.createElement('option');
-                opt.value = JSON.stringify({ xp: item.exp, en: item.en, sell: item.sell, cost: item.cost });
+                const safeSell = item.sell || 0;
+                const safeCost = item.cost || 0;
+                opt.value = JSON.stringify({ xp: item.exp, en: item.en, time: item.time, sell: safeSell, cost: safeCost });
                 opt.innerText = item.name;
                 sel.appendChild(opt);
             });
+        }
+
+        function parseTimeStr(str) {
+            if(!str || str === '-') return 0;
+            if(!isNaN(str)) return parseInt(str);
+            
+            let total = 0;
+            const h = str.match(/(\d+)\s*h/);
+            const m = str.match(/(\d+)\s*m/);
+            if(h) total += parseInt(h[1]) * 60;
+            if(m) total += parseInt(m[1]);
+            if(!h && !m) {
+                 const num = parseInt(str.replace(/\D/g,''));
+                 if(!isNaN(num)) total = num;
+            }
+            return total;
+        }
+
+        function formatDuration(minutes) {
+            if(!minutes || minutes <= 0) return "-";
+            const d = Math.floor(minutes / 1440);
+            const h = Math.floor((minutes % 1440) / 60);
+            const m = Math.floor(minutes % 60);
+            let res = "";
+            if(d > 0) res += d + "g ";
+            if(h > 0) res += h + "sa ";
+            if(m > 0) res += m + "dk";
+            return res.trim();
         }
 
         function autoFillCalc() {
             const val = document.getElementById('calcItemSelect').value;
             if(!val) return;
             const data = JSON.parse(val);
+            
             document.getElementById('unitXP').value = data.xp;
             document.getElementById('unitEnergy').value = data.en;
-            document.getElementById('unitSalePrice').value = data.sell;
-            document.getElementById('unitCost').value = data.cost || 0;
+            document.getElementById('unitSalePrice').value = data.sell; 
+            document.getElementById('unitCost').value = data.cost;
+            
+            document.getElementById('displayUnitTime').innerText = data.time;
+            document.getElementById('hiddenUnitMinutes').value = parseTimeStr(data.time);
+            
             calculate();
         }
 
@@ -521,10 +480,14 @@
             const idx = document.getElementById('calcSkillSelect').value;
             const skill = userSkills[idx];
             const targetLvl = parseInt(document.getElementById('calcTargetLvl').value) || 0;
+            
             const unitXP = parseFloat(document.getElementById('unitXP').value) || 0;
             const unitEnergy = parseFloat(document.getElementById('unitEnergy').value) || 0;
-            const unitCost = parseFloat(document.getElementById('unitCost').value) || 0;
+            const manualUnitCost = parseFloat(document.getElementById('unitCost').value) || 0;
             const unitSalePrice = parseFloat(document.getElementById('unitSalePrice').value) || 0;
+            
+            const deviceCount = parseInt(document.getElementById('deviceCount').value) || 1;
+            const unitTimeMin = parseInt(document.getElementById('hiddenUnitMinutes').value) || 0;
 
             let neededXP = 0;
             if (targetLvl > skill.lvl) {
@@ -535,33 +498,42 @@
             if(neededXP <= 0 || unitXP <= 0) { resetResults(); return; }
 
             const count = Math.ceil(neededXP / unitXP);
+
             const totalEnergy = count * unitEnergy;
             const energyCost = totalEnergy * ENERGY_PRICE;
-            const matCost = count * unitCost;
-            const totalCost = energyCost + matCost;
+            const materialCost = count * manualUnitCost; 
+            
+            const totalCost = energyCost + materialCost; // Enerji + Malzeme
             const totalSales = count * unitSalePrice;
             const profitLoss = totalSales - totalCost;
 
+            const batches = Math.ceil(count / deviceCount);
+            const totalTimeMin = batches * unitTimeMin;
+
             document.getElementById('resCount').innerText = formatNum(count);
             document.getElementById('resTotalEnergy').innerText = formatNum(totalEnergy);
-            document.getElementById('resEnergyCost').innerText = formatNum(energyCost) + "c";
-            document.getElementById('resMatCost').innerText = formatNum(matCost) + "c";
+            
             document.getElementById('resTotalCost').innerText = formatNum(totalCost) + "c";
             document.getElementById('resTotalSales').innerText = formatNum(totalSales) + "c";
             
             const plEl = document.getElementById('resProfitLoss');
             plEl.innerText = formatNum(profitLoss);
             plEl.style.color = profitLoss >= 0 ? '#ccff00' : '#ff4d4d';
+
+            document.getElementById('resBatchCount').innerText = batches.toLocaleString('tr-TR') + " Tur";
+            document.getElementById('resTotalTime').innerText = formatDuration(totalTimeMin);
         }
 
         function resetResults() {
-            ['resCount', 'resTotalEnergy', 'resEnergyCost', 'resMatCost', 'resTotalCost', 'resTotalSales', 'resProfitLoss'].forEach(id => {
-                document.getElementById(id).innerText = "-";
+            ['resCount', 'resTotalEnergy', 'resTotalCost', 'resTotalSales', 'resProfitLoss', 'resTotalTime'].forEach(id => {
+                const el = document.getElementById(id);
+                if(el) el.innerText = "-";
             });
+            document.getElementById('resBatchCount').innerText = "0 Tur";
         }
 
         function formatNum(num) {
-            return Math.ceil(num).toLocaleString('tr-TR');
+            return Number(num).toLocaleString('tr-TR', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
         }
     </script>
 </body>

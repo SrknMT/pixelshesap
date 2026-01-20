@@ -5,9 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Pixels Manager v8.7 (Tek Kutu Import)</title>
+    <meta name="apple-mobile-web-app-title" content="Pixels Pro">
+    <title>Pixels Pro</title>
     
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%236246ea%22 stroke=%22%23ccff00%22 stroke-width=%225%22/><text x=%2250%22 y=%2255%22 font-family=%22Arial%22 font-weight=%22900%22 font-size=%2260%22 fill=%22%23ccff00%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22>P</text></svg>">
+    <link rel="icon" type="image/png" href="icon.png">
+    <link rel="apple-touch-icon" href="icon.png">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
@@ -265,13 +267,13 @@
             switchView('calc');
         }
 
-        // --- CORE FUNCTIONS (View, List, etc.) ---
         function switchView(viewName) {
             document.querySelectorAll('.page-view').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
             document.getElementById('view-' + viewName).classList.remove('hidden');
             document.getElementById('nav-' + viewName).classList.add('active');
         }
+
         function populateUnifiedFilter() {
             const categories = new Set(unifiedData.map(i => i.cat));
             const sel = document.getElementById('filterItem');
@@ -279,6 +281,7 @@
                 const opt = document.createElement('option'); opt.value = cat; opt.innerText = cat; sel.appendChild(opt);
             });
         }
+
         function renderTable() {
             const container = document.getElementById('listContainer');
             const searchVal = document.getElementById('searchItem').value.toLowerCase();
@@ -314,6 +317,7 @@
                 container.appendChild(row);
             });
         }
+
         function renderProfile() {
             const list = document.getElementById('skillsList');
             list.innerHTML = '';
@@ -346,7 +350,6 @@
             const xpText = document.getElementById('importTotalXP').value;
             const status = document.getElementById('importStatus');
             
-            // Sadece sayıları al
             const xps = xpText.match(/\d+/g);
 
             if (!xps || xps.length < 5) {
@@ -366,31 +369,22 @@
                 if (targetSkill && xps[i]) {
                     const importedTotalXP = parseInt(xps[i]);
                     
-                    // LEVEL VE XP'Yİ OTOMATİK BUL
                     let calculatedLevel = 0;
-                    
-                    // xp_table'da dön ve bu XP'nin hangi level'a denk geldiğini bul
-                    // Döngü sondan başa doğru değil, baştan sona gidip "geçtiği" yeri bulmalı
                     for(let lvl=0; lvl < xp_table.length; lvl++) {
                         if (importedTotalXP >= xp_table[lvl]) {
                             calculatedLevel = lvl;
                         } else {
-                            break; // Artık daha yüksek levela yetmiyor
+                            break;
                         }
                     }
 
-                    // Levelı ata
                     targetSkill.lvl = calculatedLevel;
-
-                    // Mevcut XP = Toplam XP - O Level İçin Gereken Kümülatif XP
                     const requiredCumulativeXP = xp_table[calculatedLevel] || 0;
                     targetSkill.xp = importedTotalXP - requiredCumulativeXP;
-
                     updatedCount++;
                 }
             }
 
-            // Önce kaydet, sonra render et
             localStorage.setItem('pixels_user_skills', JSON.stringify(userSkills));
             updateTotalLevel();
             renderProfile();
@@ -404,7 +398,6 @@
             }
         }
 
-        // Manuel Kaydetme
         function manualSaveProfile() {
             userSkills.forEach((skill, index) => {
                 const lvlInput = document.getElementById(`pfl-lvl-${index}`);

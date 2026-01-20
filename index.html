@@ -5,11 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Pixels Pro</title>
+    <title>Pixels Manager v8.7 (Tek Kutu Import)</title>
     
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%236246ea%22 stroke=%22%23ccff00%22 stroke-width=%225%22/><text x=%2250%22 y=%2255%22 font-family=%22Arial%22 font-weight=%22900%22 font-size=%2260%22 fill=%22%23ccff00%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22>P</text></svg>">
-    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%236246ea%22 stroke=%22%23ccff00%22 stroke-width=%225%22/><text x=%2250%22 y=%2255%22 font-family=%22Arial%22 font-weight=%22900%22 font-size=%2260%22 fill=%22%23ccff00%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22>P</text></svg>">
-
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
     <script src="data.js"></script> 
@@ -24,19 +23,10 @@
             --text-main: #f3f4f6;
         }
 
-        body { 
-            font-family: 'Inter', sans-serif; 
-            background-color: var(--bg-dark); 
-            color: var(--text-main); 
-            -webkit-tap-highlight-color: transparent; 
-        }
-
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-dark); color: var(--text-main); -webkit-tap-highlight-color: transparent; }
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: var(--bg-dark); }
         ::-webkit-scrollbar-thumb { background: var(--pixels-purple); border-radius: 2px; }
-
-        input[type=number]::-webkit-inner-spin-button, 
-        input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
         
         .game-input {
             background: #0f0518;
@@ -54,27 +44,14 @@
         .game-input:focus { border-color: var(--neon-yellow); box-shadow: 0 0 5px rgba(204, 255, 0, 0.2); }
 
         .search-bar {
-            background: #0f0518;
-            border: 1px solid var(--border-color);
-            color: white;
-            border-radius: 8px 0 0 8px;
-            padding: 12px;
-            width: 100%;
-            outline: none;
-            font-size: 14px;
+            background: #0f0518; border: 1px solid var(--border-color); color: white;
+            border-radius: 8px 0 0 8px; padding: 12px; width: 100%; outline: none; font-size: 14px;
         }
         
         .filter-select {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            color: var(--neon-yellow);
-            border-radius: 0 8px 8px 0;
-            padding: 0 12px;
-            outline: none;
-            font-size: 12px;
-            font-weight: 800;
-            text-transform: uppercase;
-            border-left: none;
+            background: var(--bg-card); border: 1px solid var(--border-color); color: var(--neon-yellow);
+            border-radius: 0 8px 8px 0; padding: 0 12px; outline: none; font-size: 12px; font-weight: 800;
+            text-transform: uppercase; border-left: none;
         }
 
         .nav-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; padding: 12px 0; color: #a78bfa; transition: all 0.2s; border-top: 3px solid transparent; }
@@ -82,21 +59,14 @@
         .nav-btn svg { width: 26px; height: 26px; margin-bottom: 4px; }
         .nav-text { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
 
-        .glass-card { 
-            background: var(--bg-card); 
-            border: 1px solid var(--border-color); 
-            border-radius: 12px; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-            margin-bottom: 1rem;
-        }
-
+        .glass-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); margin-bottom: 1rem; }
         .table-header { font-size: 11px; font-weight: 900; color: #a78bfa; text-transform: uppercase; letter-spacing: 0.5px; }
         
-        .col-prod { grid-column: span 6; } 
-        .col-xp   { grid-column: span 2; text-align: center; }
-        .col-en   { grid-column: span 2; text-align: center; }
-        .col-time { grid-column: span 2; text-align: center; }
+        .col-prod { grid-column: span 6; } .col-xp { grid-column: span 2; text-align: center; }
+        .col-en { grid-column: span 2; text-align: center; } .col-time { grid-column: span 2; text-align: center; }
 
+        #importArea { transition: all 0.3s ease; max-height: 0; overflow: hidden; opacity: 0; }
+        #importArea.open { max-height: 400px; opacity: 1; margin-bottom: 20px; }
     </style>
 </head>
 <body class="h-screen flex flex-col overflow-hidden">
@@ -116,7 +86,6 @@
     </header>
 
     <div class="flex-1 overflow-hidden relative">
-        
         <div id="view-list" class="page-view h-full flex flex-col hidden">
             <div class="p-3 bg-[#130822] border-b border-[#4c1d95] flex sticky top-0 z-20">
                 <input type="text" id="searchItem" placeholder="Ürün Ara..." class="search-bar" oninput="renderTable()">
@@ -124,7 +93,6 @@
                     <option value="ALL">TÜMÜ</option>
                 </select>
             </div>
-
             <div class="grid grid-cols-12 gap-2 bg-[#2d1b4e] py-3 px-3 border-b border-[#4c1d95] shrink-0 items-center sticky top-[66px] z-10 shadow-md">
                 <div class="col-prod pl-1 table-header text-white">ÜRÜN ADI</div>
                 <div class="col-xp table-header text-blue-300 text-center">XP</div>
@@ -136,7 +104,6 @@
 
         <div id="view-calc" class="page-view h-full overflow-y-auto p-4 pb-24">
             <div class="max-w-lg mx-auto">
-                
                 <div class="glass-card p-5 space-y-4">
                     <div class="grid grid-cols-2 gap-4">
                         <div>
@@ -150,7 +117,6 @@
                             </select>
                         </div>
                     </div>
-
                     <div class="flex items-end gap-3 pt-3 border-t border-[#4c1d95]">
                         <div class="w-1/3">
                             <label class="table-header block mb-2 text-center">MEVCUT</label>
@@ -162,9 +128,7 @@
                             <input type="number" inputmode="decimal" id="calcTargetLvl" class="game-input text-center text-3xl font-black h-[54px]" value="10" oninput="calculate()">
                         </div>
                     </div>
-                    <div class="text-right text-xs text-purple-300">
-                        Gereken XP: <span id="calcNeededXP" class="text-white font-bold">0</span>
-                    </div>
+                    <div class="text-right text-xs text-purple-300">Gereken XP: <span id="calcNeededXP" class="text-white font-bold">0</span></div>
                 </div>
 
                 <div class="glass-card p-4 bg-[#1a0b2e] border-[#ccff00]">
@@ -173,7 +137,6 @@
                         <div class="flex-1">
                             <label class="text-[9px] text-white font-bold block mb-1">CİHAZ / TARLA SAYISI</label>
                             <input type="number" inputmode="decimal" id="deviceCount" class="game-input text-xl text-[#ccff00] !border-[#ccff00]" value="1" placeholder="1" oninput="calculate()">
-                            <p class="text-[8px] text-slate-500 mt-1 text-center">Tek seferde kaç üretim?</p>
                         </div>
                         <div class="w-1/3 text-center bg-[#0f0518] p-2 rounded-lg border border-[#4c1d95]">
                             <div class="text-[9px] text-slate-400 font-bold mb-1">SÜRE (dk)</div>
@@ -188,7 +151,6 @@
                     <div class="grid grid-cols-4 gap-2">
                         <div><label class="text-[8px] text-blue-300 font-bold block mb-1 text-center">XP</label><input type="number" inputmode="decimal" id="unitXP" class="game-input text-sm p-2" oninput="calculate()"></div>
                         <div><label class="text-[8px] text-purple-300 font-bold block mb-1 text-center">EN</label><input type="number" inputmode="decimal" id="unitEnergy" class="game-input text-sm p-2" oninput="calculate()"></div>
-                        
                         <div><label class="text-[8px] text-red-400 font-bold block mb-1 text-center">MALİYET</label><input type="number" inputmode="decimal" id="unitCost" class="game-input text-sm p-2 border-red-900" placeholder="0" oninput="calculate()"></div>
                         <div><label class="text-[8px] text-[#ccff00] font-bold block mb-1 text-center">SATIŞ</label><input type="number" inputmode="decimal" id="unitSalePrice" class="game-input text-sm p-2 border-lime-900" placeholder="0" oninput="calculate()"></div>
                     </div>
@@ -199,35 +161,54 @@
                         <span class="text-xs font-bold text-white tracking-widest">ANALİZ RAPORU</span>
                         <span id="resBatchCount" class="text-[9px] font-bold text-[#ccff00] bg-black/30 px-2 py-0.5 rounded">0 Tur</span>
                     </div>
-                    
                     <div class="p-5 space-y-4">
                         <div class="bg-blue-900/20 border border-blue-800 p-3 rounded-lg flex justify-between items-center">
                             <span class="text-[10px] text-blue-300 font-bold uppercase">TOPLAM SÜRE</span>
                             <span id="resTotalTime" class="text-xl font-black text-white">-</span>
                         </div>
-
                         <div class="grid grid-cols-2 gap-y-2 gap-x-4 border-b border-[#4c1d95] pb-4 text-sm">
                             <div class="flex justify-between"><span class="text-[10px] text-slate-400 font-bold uppercase">ADET</span><span class="text-white font-bold" id="resCount">-</span></div>
                             <div class="flex justify-between"><span class="text-[10px] text-slate-400 font-bold uppercase">TOPLAM ENERJİ</span><span class="text-purple-400 font-bold" id="resTotalEnergy">-</span></div>
                             <div class="flex justify-between"><span class="text-[10px] text-slate-400 font-bold uppercase">ENRJ + MALZEME</span><span class="text-red-400 font-bold" id="resTotalCost">-</span></div>
                             <div class="flex justify-between"><span class="text-[10px] text-slate-400 font-bold uppercase">TOPLAM CİRO</span><span class="text-[#ccff00] font-bold" id="resTotalSales">-</span></div>
                         </div>
-
                         <div class="bg-[#0f0518] border border-[#ccff00] rounded-xl p-3 text-center">
                             <div class="text-[10px] text-[#ccff00] uppercase font-black tracking-widest">TAHMİNİ NET KÂR</div>
                             <div class="text-3xl font-black text-white mt-1" id="resProfitLoss">-</div>
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
 
         <div id="view-profile" class="page-view h-full overflow-y-auto hidden p-4 pb-24">
             <div class="max-w-lg mx-auto space-y-4">
+                
+                <div class="glass-card p-4 border-[#ccff00]">
+                    <button onclick="toggleImport()" class="w-full bg-[#2d1b4e] border border-[#ccff00] border-dashed text-[#ccff00] px-4 py-2 rounded-lg font-bold text-xs uppercase hover:bg-[#ccff00] hover:text-black transition-colors mb-2">
+                        📋 Hızlı Yükle (Sadece Total XP)
+                    </button>
+                    
+                    <div id="importArea">
+                        <div class="bg-blue-900/30 p-2 rounded mb-2 border border-blue-500/30">
+                            <p class="text-[10px] text-blue-200">
+                                💡 <strong>Nasıl Çalışır?</strong><br>
+                                Oyunun Skills tablosundaki <b>"Total XP"</b> sütununu (en sağdaki sütun) yukarıdan aşağıya kopyalayıp yapıştırın. Sistem Level ve XP'nizi otomatik bulur.
+                            </p>
+                        </div>
+
+                        <div>
+                            <textarea id="importTotalXP" class="w-full h-40 bg-[#0f0518] border border-[#4c1d95] rounded-lg p-2 text-xs text-white font-mono text-center" placeholder="Örn:&#10;518300&#10;250000&#10;12500&#10;..."></textarea>
+                        </div>
+
+                        <button onclick="processXPOnlyImport()" class="w-full bg-[#ccff00] text-black font-bold py-2 rounded-lg shadow-[0_0_10px_rgba(204,255,0,0.3)] active:scale-95 mt-2">ANALİZ ET VE KAYDET</button>
+                        <p id="importStatus" class="text-[10px] text-center mt-2 text-slate-400 h-4"></p>
+                    </div>
+                </div>
+
                 <div class="glass-card p-4 flex justify-between items-center bg-gradient-to-r from-[#2d1b4e] to-[#130822]">
                     <div><h2 class="text-lg font-black text-white uppercase tracking-wider">Yetenekler</h2><p class="text-[10px] text-purple-300">Seviyelerini güncel tut.</p></div>
-                    <button onclick="saveProfile()" class="bg-[#ccff00] hover:bg-[#b3e600] text-black px-6 py-2.5 rounded-lg font-bold shadow-[0_0_15px_rgba(204,255,0,0.3)] active:scale-95 transition-transform uppercase text-xs">KAYDET</button>
+                    <button onclick="manualSaveProfile()" class="bg-[#ccff00] hover:bg-[#b3e600] text-black px-6 py-2.5 rounded-lg font-bold shadow-[0_0_15px_rgba(204,255,0,0.3)] active:scale-95 transition-transform uppercase text-xs">KAYDET</button>
                 </div>
                 <div class="space-y-3" id="skillsList"></div>
             </div>
@@ -255,16 +236,16 @@
         const xp_table = [0, 100, 316, 661, 1148, 1792, 2609, 3618, 4839, 6294, 8007, 10006, 12321, 14985, 18035, 21512, 25460, 29929, 34974, 40655, 47039, 54200, 62220, 71189, 81207, 92384, 104843, 118718, 134158, 151327, 170408, 191601, 215129, 241237, 270196, 302306, 337899, 377341, 421037, 469434, 523027, 582362, 648043, 720738, 801184, 890196, 988675, 1097617, 1218122, 1351407, 1498815, 1661832, 1842099, 2041431, 2261832, 2505519, 2774940, 3072802, 3402097, 3766129, 4168553, 4613406, 5105150, 5648717, 6249557, 6913694, 7647784, 8459185, 9356027, 10347297, 11442925, 12653887, 13992313, 15471608, 17106587, 18913624, 20910815, 23118158, 25557755, 28254032, 31233985, 34527448, 38167393, 42190260, 46636322, 51550086, 56980741, 62982648, 69615887, 76946856, 85048935, 94003223, 103899347, 114836361, 126923737, 140282459, 155046236, 171362838, 189395578, 209324943, 231350404];
         
         const defaultSkills = [
-            { id: "farming", name: "Farming", icon: "🍎", lvl: 1, xp: 0 },
-            { id: "cooking", name: "Cooking", icon: "🍳", lvl: 1, xp: 0 },
-            { id: "woodworking", name: "Woodwork", icon: "🪑", lvl: 1, xp: 0 },
-            { id: "forestry", name: "Forestry", icon: "🌲", lvl: 1, xp: 0 },
-            { id: "mining", name: "Mining", icon: "⛏️", lvl: 1, xp: 0 },
-            { id: "metalworking", name: "Metalwork", icon: "🔨", lvl: 1, xp: 0 },
-            { id: "stoneshaping", name: "Stoneshape", icon: "🗿", lvl: 1, xp: 0 },
-            { id: "business", name: "Business", icon: "💼", lvl: 1, xp: 0 },
-            { id: "animal", name: "Petcare", icon: "🐾", lvl: 1, xp: 0 },
-            { id: "exploration", name: "Exploration", icon: "🔍", lvl: 1, xp: 0 }
+            { id: "farming", name: "Farming", icon: "farming.png", lvl: 1, xp: 0 },
+            { id: "cooking", name: "Cooking", icon: "cooking.png", lvl: 1, xp: 0 },
+            { id: "woodworking", name: "Woodwork", icon: "woodwork.png", lvl: 1, xp: 0 },
+            { id: "forestry", name: "Forestry", icon: "forestry.png", lvl: 1, xp: 0 },
+            { id: "mining", name: "Mining", icon: "mining.png", lvl: 1, xp: 0 },
+            { id: "metalworking", name: "Metalwork", icon: "metalwork.png", lvl: 1, xp: 0 },
+            { id: "stoneshaping", name: "Stoneshape", icon: "stoneshaping.png", lvl: 1, xp: 0 },
+            { id: "business", name: "Business", icon: "business.png", lvl: 1, xp: 0 },
+            { id: "animal", name: "Petcare", icon: "animal.png", lvl: 1, xp: 0 },
+            { id: "exploration", name: "Exploration", icon: "exploration.png", lvl: 1, xp: 0 }
         ];
 
         let userSkills = JSON.parse(localStorage.getItem('pixels_user_skills')) || defaultSkills;
@@ -272,7 +253,7 @@
 
         window.onload = function() {
             if(typeof rawData === 'undefined' && typeof craftData === 'undefined') {
-                alert("HATA: data.js bulunamadı! data.js dosyasının index.html ile aynı klasörde olduğundan emin ol.");
+                alert("Veri tabanı (data.js) yüklenemedi!");
             } else {
                 unifiedData = [...(typeof rawData !== 'undefined' ? rawData : []), ...(typeof craftData !== 'undefined' ? craftData : [])];
             }
@@ -284,22 +265,20 @@
             switchView('calc');
         }
 
+        // --- CORE FUNCTIONS (View, List, etc.) ---
         function switchView(viewName) {
             document.querySelectorAll('.page-view').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
             document.getElementById('view-' + viewName).classList.remove('hidden');
             document.getElementById('nav-' + viewName).classList.add('active');
         }
-
         function populateUnifiedFilter() {
             const categories = new Set(unifiedData.map(i => i.cat));
             const sel = document.getElementById('filterItem');
             Array.from(categories).sort().forEach(cat => {
-                const opt = document.createElement('option'); opt.value = cat; opt.innerText = cat;
-                sel.appendChild(opt);
+                const opt = document.createElement('option'); opt.value = cat; opt.innerText = cat; sel.appendChild(opt);
             });
         }
-
         function renderTable() {
             const container = document.getElementById('listContainer');
             const searchVal = document.getElementById('searchItem').value.toLowerCase();
@@ -311,9 +290,7 @@
                 const matchFilter = filterVal === "ALL" || item.cat === filterVal;
                 return matchSearch && matchFilter;
             });
-
             filtered.sort((a,b) => a.cat.localeCompare(b.cat));
-
             filtered.forEach((item) => {
                 let catColor = 'text-slate-400';
                 if(item.cat.includes('Farming')) catColor = 'text-green-400';
@@ -325,7 +302,6 @@
 
                 const row = document.createElement('div');
                 row.className = 'grid grid-cols-12 gap-2 items-center bg-[#201036] border-b border-[#4c1d95] p-3 hover:bg-[#2d1b4e] transition-colors rounded-lg mb-1';
-                
                 row.innerHTML = `
                     <div class="col-prod flex flex-col">
                         <span class="font-bold uppercase ${catColor} text-[10px] tracking-wider">${item.cat}</span>
@@ -338,14 +314,13 @@
                 container.appendChild(row);
             });
         }
-
         function renderProfile() {
             const list = document.getElementById('skillsList');
             list.innerHTML = '';
             userSkills.forEach((skill, index) => {
                 list.innerHTML += `
                     <div class="glass-card p-4 flex items-center gap-4 bg-[#201036]">
-                        <div class="text-3xl">${skill.icon}</div>
+                        <img src="${skill.icon}" alt="${skill.name}" class="w-10 h-10 object-contain">
                         <div class="flex-1">
                             <div class="text-xs font-black text-white uppercase mb-1 tracking-wider">${skill.name}</div>
                             <div class="flex gap-3">
@@ -364,15 +339,83 @@
             });
         }
 
-        function saveProfile() {
+        // --- TEK KUTU IMPORT SİSTEMİ (XP BASED) ---
+        function toggleImport() { document.getElementById('importArea').classList.toggle('open'); }
+
+        function processXPOnlyImport() {
+            const xpText = document.getElementById('importTotalXP').value;
+            const status = document.getElementById('importStatus');
+            
+            // Sadece sayıları al
+            const xps = xpText.match(/\d+/g);
+
+            if (!xps || xps.length < 5) {
+                status.innerText = "❌ Yeterli veri bulunamadı.";
+                status.className = "text-[10px] text-center mt-2 text-red-400 font-bold";
+                return;
+            }
+
+            const orderedIDs = ["farming", "forestry", "cooking", "mining", "woodworking", "metalworking", "stoneshaping", "animal", "business", "exploration"];
+
+            let updatedCount = 0;
+
+            for (let i = 0; i < orderedIDs.length; i++) {
+                const skillId = orderedIDs[i];
+                const targetSkill = userSkills.find(s => s.id === skillId);
+                
+                if (targetSkill && xps[i]) {
+                    const importedTotalXP = parseInt(xps[i]);
+                    
+                    // LEVEL VE XP'Yİ OTOMATİK BUL
+                    let calculatedLevel = 0;
+                    
+                    // xp_table'da dön ve bu XP'nin hangi level'a denk geldiğini bul
+                    // Döngü sondan başa doğru değil, baştan sona gidip "geçtiği" yeri bulmalı
+                    for(let lvl=0; lvl < xp_table.length; lvl++) {
+                        if (importedTotalXP >= xp_table[lvl]) {
+                            calculatedLevel = lvl;
+                        } else {
+                            break; // Artık daha yüksek levela yetmiyor
+                        }
+                    }
+
+                    // Levelı ata
+                    targetSkill.lvl = calculatedLevel;
+
+                    // Mevcut XP = Toplam XP - O Level İçin Gereken Kümülatif XP
+                    const requiredCumulativeXP = xp_table[calculatedLevel] || 0;
+                    targetSkill.xp = importedTotalXP - requiredCumulativeXP;
+
+                    updatedCount++;
+                }
+            }
+
+            // Önce kaydet, sonra render et
+            localStorage.setItem('pixels_user_skills', JSON.stringify(userSkills));
+            updateTotalLevel();
+            renderProfile();
+            populateCalcSkillSelect();
+            
+            if(updatedCount > 0) {
+                status.innerText = `✅ ${updatedCount} Yetenek başarıyla analiz edildi ve kaydedildi!`;
+                status.className = "text-[10px] text-center mt-2 text-green-400 font-bold";
+            } else {
+                 status.innerText = "⚠️ Değişiklik olmadı.";
+            }
+        }
+
+        // Manuel Kaydetme
+        function manualSaveProfile() {
             userSkills.forEach((skill, index) => {
-                skill.lvl = parseInt(document.getElementById(`pfl-lvl-${index}`).value) || 0;
-                skill.xp = parseFloat(document.getElementById(`pfl-xp-${index}`).value) || 0;
+                const lvlInput = document.getElementById(`pfl-lvl-${index}`);
+                const xpInput = document.getElementById(`pfl-xp-${index}`);
+                if(lvlInput) skill.lvl = parseInt(lvlInput.value) || 0;
+                if(xpInput) skill.xp = parseFloat(xpInput.value) || 0;
             });
             localStorage.setItem('pixels_user_skills', JSON.stringify(userSkills));
             updateTotalLevel();
             populateCalcSkillSelect();
-            alert("PROFİL KAYDEDİLDİ ✅");
+            alert("Kayıt Başarılı!");
         }
 
         function updateTotalLevel() {
@@ -380,26 +423,23 @@
             document.getElementById('headerTotalLevel').innerText = total;
         }
 
+        // --- CALC FUNCTIONS ---
         function getCumulativeXP(lvl) {
             if (lvl < 0) return 0;
             if (lvl >= xp_table.length) return xp_table[xp_table.length - 1];
             return xp_table[lvl];
         }
-
         function populateCalcSkillSelect() {
             const sel = document.getElementById('calcSkillSelect');
             const currentVal = sel.value;
             sel.innerHTML = '';
             userSkills.forEach((skill, index) => {
                 const opt = document.createElement('option');
-                opt.value = index;
-                opt.innerText = `${skill.name}`;
-                sel.appendChild(opt);
+                opt.value = index; opt.innerText = `${skill.name}`; sel.appendChild(opt);
             });
             if(currentVal && currentVal < userSkills.length) sel.value = currentVal;
             updateCalcSkillContext();
         }
-
         function updateCalcSkillContext() {
             const idx = document.getElementById('calcSkillSelect').value;
             const skill = userSkills[idx];
@@ -410,7 +450,6 @@
             populateItemSelect(skill.name);
             calculate();
         }
-
         function populateItemSelect(skillName) {
             const sel = document.getElementById('calcItemSelect');
             sel.innerHTML = '<option value="">-- Listeden Seç --</option>';
@@ -422,70 +461,49 @@
                 return i.cat.includes(skillName);
             });
             filtered.sort((a,b) => a.name.localeCompare(b.name));
-            filtered.forEach((item, index) => {
+            filtered.forEach((item) => {
                 const opt = document.createElement('option');
-                const safeSell = item.sell || 0;
-                const safeCost = item.cost || 0;
+                const safeSell = item.sell || 0; const safeCost = item.cost || 0;
                 opt.value = JSON.stringify({ xp: item.exp, en: item.en, time: item.time, sell: safeSell, cost: safeCost });
                 opt.innerText = item.name;
                 sel.appendChild(opt);
             });
         }
-
         function parseTimeStr(str) {
             if(!str || str === '-') return 0;
             if(!isNaN(str)) return parseInt(str);
-            
             let total = 0;
-            const h = str.match(/(\d+)\s*h/);
-            const m = str.match(/(\d+)\s*m/);
-            if(h) total += parseInt(h[1]) * 60;
-            if(m) total += parseInt(m[1]);
-            if(!h && !m) {
-                 const num = parseInt(str.replace(/\D/g,''));
-                 if(!isNaN(num)) total = num;
-            }
+            const h = str.match(/(\d+)\s*h/); const m = str.match(/(\d+)\s*m/);
+            if(h) total += parseInt(h[1]) * 60; if(m) total += parseInt(m[1]);
+            if(!h && !m) { const num = parseInt(str.replace(/\D/g,'')); if(!isNaN(num)) total = num; }
             return total;
         }
-
         function formatDuration(minutes) {
             if(!minutes || minutes <= 0) return "-";
-            const d = Math.floor(minutes / 1440);
-            const h = Math.floor((minutes % 1440) / 60);
-            const m = Math.floor(minutes % 60);
-            let res = "";
-            if(d > 0) res += d + "g ";
-            if(h > 0) res += h + "sa ";
-            if(m > 0) res += m + "dk";
+            const d = Math.floor(minutes / 1440); const h = Math.floor((minutes % 1440) / 60); const m = Math.floor(minutes % 60);
+            let res = ""; if(d > 0) res += d + "g "; if(h > 0) res += h + "sa "; if(m > 0) res += m + "dk";
             return res.trim();
         }
-
         function autoFillCalc() {
             const val = document.getElementById('calcItemSelect').value;
             if(!val) return;
             const data = JSON.parse(val);
-            
             document.getElementById('unitXP').value = data.xp;
             document.getElementById('unitEnergy').value = data.en;
-            document.getElementById('unitSalePrice').value = data.sell; 
+            document.getElementById('unitSalePrice').value = data.sell;
             document.getElementById('unitCost').value = data.cost;
-            
             document.getElementById('displayUnitTime').innerText = data.time;
             document.getElementById('hiddenUnitMinutes').value = parseTimeStr(data.time);
-            
             calculate();
         }
-
         function calculate() {
             const idx = document.getElementById('calcSkillSelect').value;
             const skill = userSkills[idx];
             const targetLvl = parseInt(document.getElementById('calcTargetLvl').value) || 0;
-            
             const unitXP = parseFloat(document.getElementById('unitXP').value) || 0;
             const unitEnergy = parseFloat(document.getElementById('unitEnergy').value) || 0;
             const manualUnitCost = parseFloat(document.getElementById('unitCost').value) || 0;
             const unitSalePrice = parseFloat(document.getElementById('unitSalePrice').value) || 0;
-            
             const deviceCount = parseInt(document.getElementById('deviceCount').value) || 1;
             const unitTimeMin = parseInt(document.getElementById('hiddenUnitMinutes').value) || 0;
 
@@ -498,45 +516,34 @@
             if(neededXP <= 0 || unitXP <= 0) { resetResults(); return; }
 
             const count = Math.ceil(neededXP / unitXP);
-
             const totalEnergy = count * unitEnergy;
             const energyCost = totalEnergy * ENERGY_PRICE;
             const materialCost = count * manualUnitCost; 
-            
-            const totalCost = energyCost + materialCost; // Enerji + Malzeme
+            const totalCost = energyCost + materialCost; 
             const totalSales = count * unitSalePrice;
             const profitLoss = totalSales - totalCost;
-
             const batches = Math.ceil(count / deviceCount);
             const totalTimeMin = batches * unitTimeMin;
 
             document.getElementById('resCount').innerText = formatNum(count);
             document.getElementById('resTotalEnergy').innerText = formatNum(totalEnergy);
-            
             document.getElementById('resTotalCost').innerText = formatNum(totalCost) + "c";
             document.getElementById('resTotalSales').innerText = formatNum(totalSales) + "c";
-            
             const plEl = document.getElementById('resProfitLoss');
             plEl.innerText = formatNum(profitLoss);
             plEl.style.color = profitLoss >= 0 ? '#ccff00' : '#ff4d4d';
-
             document.getElementById('resBatchCount').innerText = batches.toLocaleString('tr-TR') + " Tur";
             document.getElementById('resTotalTime').innerText = formatDuration(totalTimeMin);
         }
-
         function resetResults() {
             ['resCount', 'resTotalEnergy', 'resTotalCost', 'resTotalSales', 'resProfitLoss', 'resTotalTime'].forEach(id => {
-                const el = document.getElementById(id);
-                if(el) el.innerText = "-";
+                const el = document.getElementById(id); if(el) el.innerText = "-";
             });
             document.getElementById('resBatchCount').innerText = "0 Tur";
         }
-
         function formatNum(num) {
             return Number(num).toLocaleString('tr-TR', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
         }
     </script>
 </body>
 </html>
-
-
